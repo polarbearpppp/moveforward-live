@@ -6,7 +6,7 @@ import * as RiIcons from 'react-icons/ri';
 
 export const SidebarData = [
   {
-    title: 'Overview',
+    title: 'เขตเลือกตั้งทั้งหมด',
     path: '/overview',
     icon: <AiIcons.AiFillHome />,
     iconClosed: <RiIcons.RiArrowDownSFill />,
@@ -14,19 +14,19 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: 'Users',
+        title: 'แขวงทั้งหมด',
         path: '/overview/users',
         icon: <IoIcons.IoIosPaper />
       },
-      {
-        title: 'Revenue',
-        path: '/overview/revenue',
-        icon: <IoIcons.IoIosPaper />
-      }
+      // {
+      //   title: 'Revenue',
+      //   path: '/overview/revenue',
+      //   icon: <IoIcons.IoIosPaper />
+      // }
     ]
   },
   {
-    title: 'Reports',
+    title: 'เขตเลือกตั้งจตุจักร',
     path: '/reports',
     icon: <IoIcons.IoIosPaper />,
     iconClosed: <RiIcons.RiArrowDownSFill />,
@@ -34,36 +34,31 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: 'Reports',
+        title: 'แขวงลาดยาว',
         path: '/reports/reports1',
         icon: <IoIcons.IoIosPaper />,
         cName: 'sub-nav'
       },
       {
-        title: 'Reports 2',
+        title: 'แขวงจอมพล',
         path: '/reports/reports2',
         icon: <IoIcons.IoIosPaper />,
         cName: 'sub-nav'
       },
       {
-        title: 'Reports 3',
+        title: 'แขวงจตุจักร',
         path: '/reports/reports3',
         icon: <IoIcons.IoIosPaper />
       }
     ]
   },
+  // {
+  //   title: 'Products',
+  //   path: '/products',
+  //   icon: <FaIcons.FaCartPlus />
+  // },
   {
-    title: 'Products',
-    path: '/products',
-    icon: <FaIcons.FaCartPlus />
-  },
-  {
-    title: 'Team',
-    path: '/team',
-    icon: <IoIcons.IoMdPeople />
-  },
-  {
-    title: 'Messages',
+    title: 'เขตเลือกตั้งหลักสี่',
     path: '/messages',
     icon: <FaIcons.FaEnvelopeOpenText />,
 
@@ -72,20 +67,25 @@ export const SidebarData = [
 
     subNav: [
       {
-        title: 'Message 1',
+        title: 'แขวงทุ่งสองห้อง',
         path: '/messages/message1',
         icon: <IoIcons.IoIosPaper />
       },
-      {
-        title: 'Message 2',
-        path: '/messages/message2',
-        icon: <IoIcons.IoIosPaper />
-      }
+      // {
+      //   title: 'Message 2',
+      //   path: '/messages/message2',
+      //   icon: <IoIcons.IoIosPaper />
+      // }
     ]
   },
+  // {
+  //   title: 'Support',
+  //   path: '/support',
+  //   icon: <IoIcons.IoMdHelpCircle />
+  // }
   {
-    title: 'Support',
-    path: '/support',
-    icon: <IoIcons.IoMdHelpCircle />
-  }
+    title: 'VoteSend',
+    path: '/vote',
+    icon: <IoIcons.IoMdPeople />
+  },
 ];

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect, useReducer } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import AuthReducer from '../context/AuthReducer';
+
 
 const SidebarLink = styled(Link)`
   display: flex;
@@ -14,8 +16,8 @@ const SidebarLink = styled(Link)`
   font-size: 18px;
 
   &:hover {
-    background: #252831;
-    border-left: 4px solid #632ce4;
+    background: #F57F17;
+    border-left: 4px solid #F57F17;
     cursor: pointer;
   }
 `;
@@ -35,19 +37,25 @@ const DropdownLink = styled(Link)`
   font-size: 18px;
 
   &:hover {
-    background: #632ce4;
+    background: #F57F17;
     cursor: pointer;
   }
 `;
 
-const SubMenu = ({ item }) => {
+const SubMenu = ({ item, hasPermission }) => {
   const [subnav, setSubnav] = useState(false);
 
   const showSubnav = () => setSubnav(!subnav);
 
+  const handleClick = () => {
+    if (item.subNav && hasPermission) {
+      showSubnav();
+    }
+  };
+
   return (
     <>
-      <SidebarLink to={item.path} onClick={item.subNav && showSubnav}>
+      <SidebarLink to={item.path} onClick={handleClick}>
         <div>
           {item.icon}
           <SidebarLabel>{item.title}</SidebarLabel>
