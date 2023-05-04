@@ -17,6 +17,8 @@ import { ProgressBar } from 'primereact/progressbar';
 import { Slider } from 'primereact/slider';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Dropdown } from 'primereact/dropdown';
+import { db } from '../firebase';
+import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 
 const Message = () => {
     const [products, setProducts] = useState([]);
@@ -92,8 +94,27 @@ const Message = () => {
       }, []);
   
     // console.log(selectedProduct.value.id);
+  const [scores, setScores] = useState([]);
+  // function getVoteData() {
+  //   const voteColRef = collection(db, 'เขตจตุจักร/แขวงลาดยาว/ทุกจุด');
+  //   const product2 = [];
+  
+  //   getDocs(voteColRef)
+  //     .then((querySnapshot) => {
+  //       querySnapshot.forEach((doc) => {
+  //         const docData = doc.data();
+  //         product2.push(docData);
+  //       });
+  //       console.log('this is product 2====>', product2)
+  //       console.log('this is product 1====>', product1)
+  //     })
+  //     .catch((error) => {
+  //       console.log('Error getting documents: ', error);
+  //     });
+  // }
+  // getVoteData()
 
-
+  // console.log('this is test display',scores[0])
     // console.log(typeof(products))
     useEffect(() => {
         ProductService.getProductsSmall().then((data) => setProducts(data));
@@ -154,6 +175,7 @@ export const MessagesOne = () => {
     
     const [products, setProducts] = useState([]);
     const [product1, setproduct1] = useState([]);
+    const [product2, setproduct2] = useState([]);
 
     useEffect(() => {
         PointService.getScore().then((data) => setproduct1(data));
@@ -260,6 +282,58 @@ export const MessagesOne = () => {
     useEffect(() => {
         ProductService.getProductsSmall().then((data) => setProducts(data));
       }, []);
+
+      useEffect(() => {
+        const voteColRef = collection(db, 'เขตจตุจักร/แขวงลาดยาว/ทุกจุด');
+        
+        const unsubscribe = onSnapshot(voteColRef, async (querySnapshot) => {
+          const product2 = [];
+          const keyp2 = [];
+        
+          querySnapshot.forEach((doc) => {
+            const docData = doc.data();
+            docData['id'] = docData.name;
+            product2.push(docData);
+            keyp2.push(docData.name);
+          });
+        
+          let index = 0;
+          for (const element of keyp2) {
+            let tmpSumScore = 0;
+            let newParty = [];
+            const partyScore = []
+            const tmpREf = collection(db, `เขตจตุจักร/แขวงลาดยาว/ทุกจุด/${element}/partyscore`);
+            const partySnapshot = await getDocs(tmpREf);
+            partySnapshot.forEach((doc) => {
+              const docData = doc.data();
+              const scoreObj = {
+                score: docData.score,
+                name: docData.name,
+                image: docData.image
+              };
+              tmpSumScore += docData.score;
+              partyScore.push(scoreObj);
+            });
+        
+            for (const dict of partyScore) {
+              let tmp = {}
+              tmp = dict
+              tmp['scorepercen'] = Math.floor((tmp.score / tmpSumScore) * 100)
+              newParty.push(tmp)
+            }
+            product2[index]['score'] = tmpSumScore;
+            product2[index]['partyscore'] = newParty;
+            index += 1;
+          }
+        
+          setproduct2(product2);
+        });
+        
+        return () => unsubscribe();
+      }, []);
+      
+      
+      console.log('this is totalScore ====>', product2);
     return (
         <div className="flex-container" >
 
@@ -272,14 +346,14 @@ export const MessagesOne = () => {
             setSelectedProduct(e)
         }
         dataKey="id"
-        value={product1}
+        value={product2}
         paginator rows={10} rowsPerPageOptions={[5, 10]}   
         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
         currentPageReportTemplate="{first} to {last} of {totalRecords}"    
         rowClassName={rowClass}
         tableStyle={{ minWidth: '50rem' }}
       >
-        <Column selectionMode="single" headerStyle={{ width: '5rem' }}></Column>
+        <Column selectionMode="single" headerStyle={{ width: '2rem' }}></Column>
         {/* <Column
           field="representative.name"
          
@@ -287,6 +361,7 @@ export const MessagesOne = () => {
         /> */}
         {/* <Column field="code" header="Code"></Column> */}
         <Column field="name" header="Name"
+        style={{ minWidth: '2rem' }} 
         sortable
         ></Column>
         {/* <Column field="category" header="Category"></Column> */}
@@ -296,7 +371,7 @@ export const MessagesOne = () => {
           field="status"
           header="status"
           body={statusBodyTemplate}
-          style={{ minWidth: '100px' }}
+          style={{ minWidth: '1rem' }}
           sortable
         ></Column>
         <Column
@@ -304,7 +379,7 @@ export const MessagesOne = () => {
           body={stockBodyTemplate}
           sortable
           dataType="numeric"
-          style={{ minWidth: '6rem' }}
+          style={{ minWidth: '4rem' }}
           filter
           header="Score"
           filterElement={balanceFilterTemplate}
@@ -330,11 +405,11 @@ export const MessagesOne = () => {
         <Column
           field="representative.name"
           header="Representative"
-          style={{ minWidth: '10rem' }} 
+          style={{ minWidth: '1rem' }} 
           body={representativeBodyTemplate}
         />
         {/* <Column field="code" header="Code"></Column> */}
-        <Column field="name" header="Name"></Column>
+        <Column field="name" header="Name" style={{ minWidth: '2rem' }} ></Column>
         {/* <Column field="category" header="Category"></Column> */}
         {/* <Column
           field="status"
@@ -348,7 +423,8 @@ export const MessagesOne = () => {
           body={stockBodyTemplate}
           sortable
           dataType="numeric"
-          style={{ minWidth: '8rem' }}
+          
+          style={{ minWidth: '5rem' }}
           filter
           filterElement={balanceFilterTemplate}
           // body={balanceBodyTemplate}
@@ -367,3 +443,6 @@ export const MessagesOne = () => {
     );
   };
   
+
+
+

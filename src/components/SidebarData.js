@@ -84,8 +84,18 @@ export const SidebarData = [
   //   icon: <IoIcons.IoMdHelpCircle />
   // }
   {
-    title: 'VoteSend',
+    title: 'VoteOnline',
     path: '/vote',
     icon: <IoIcons.IoMdPeople />
   },
+  {
+    title: 'VoteOffline',
+    path: '/voteOffline',
+    icon: <IoIcons.IoMdPeople />
+  },{
+    title: "TestPage",
+    path: '/testpage',
+    icon: <IoIcons.IoMdPeople />
+  }
+
 ];

@@ -1,3 +1,7 @@
+import React from "react";
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
+
 export const PointService = {
     getPointData(){
         return [
@@ -194,6 +198,25 @@ export const PointService = {
     getScore() {
         return Promise.resolve(this.getPointData());
       },
+
+      getVoteData() {
+        const voteColRef = collection(db,'เขตจตุจักร/แขวงลาดยาว/จุดที่ 1')
+        // const getSubColRef = collection(voteColRef,'')
+        getDocs(voteColRef)
+        .then(  response => {
+          const vscore = response.docs.map(doc => ({
+          data: doc.data(),
+          id:doc.id
+          }))
+          console.log('this is vscore', vscore)
+          return Promise.resolve(
+            [vscore]
+            
+          )
+        })
+        .catch(error => console.log(error))
+      },
+    
     
     getTotalScore() {
       const dataAll = this.getPointData();

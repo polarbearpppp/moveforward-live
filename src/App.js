@@ -3,14 +3,16 @@ import './datatable.css';
 import Sidebar from './components/Sidebar';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import Overview, { CannotAccess, UsersReport } from './pages/Overview';
-import { Reports, ReportsOne, ReportsTwo, ReportsThree } from './pages/Reports';
+import { Reports, ReportsOne, ReportsTwo, ReportsThree,TestPage } from './pages/Reports';
 import Message, { MessagesOne } from './pages/Message';
 import Support from './pages/Support';
-import { useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { AuthContext } from './context/AuthContext';
 import Vote from './pages/Vote';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from './firebase';
+import { ShopContextProvider } from './context/shop-content';
+import VoteOffline from './pages/voteOffline';
 // Define roles and permissions
 const roles = {
   admin: ['read', 'write', 'update', 'delete'],
@@ -18,10 +20,16 @@ const roles = {
   guest: ['read'],
 };
 
+export const NodeContext = createContext({
+  dbar1: 'เขตจตุจักร',
+  dbar2: 'แขวงลาดยาว',
+  dbar3: 'จุดที่ 5'
+});
+
 function App() {
   const {currentUser} = useContext(AuthContext);
-  const [userRole, setUserRole] = useState(currentUser ? currentUser.role : 'guest');
-  let permission = 'user'
+  // const [userRole, setUserRole] = useState(currentUser ? currentUser.role : 'guest');
+  let permission = 'admin'
 
   // console.log('ID1',currentUser.uid)
   const RequireAuth = ({ children }) => {
@@ -33,26 +41,26 @@ function App() {
   };
 
   const [data, setData] = useState([]);
-  useEffect (() => {
-    let list = []
-    const fetechData = async () =>{
-      try {
-      const querySnapshot = await getDocs(collection(db, "userAccess"),currentUser.pid);
-      querySnapshot.forEach((doc) => {
-        console.log(doc.id, " => ", doc.data())
-        if( doc.id === currentUser.uid){
-          permission = doc.data().role;
-        }
-        list.push(doc.data())
-        console.log('inUsesss',permission)
-      });
-      setData(list)
-      }catch (err){
-        console.log(err)
-      }
-    };
-    fetechData();
-  },[permission])
+  // useEffect (() => {
+  //   let list = []
+  //   const fetechData = async () =>{
+  //     try {
+  //     const querySnapshot = await getDocs(collection(db, "userAccess"),currentUser.pid);
+  //     querySnapshot.forEach((doc) => {
+  //       console.log(doc.id, " => ", doc.data())
+  //       if( doc.id === currentUser.uid){
+  //         permission = doc.data().role;
+  //       }
+  //       list.push(doc.data())
+  //       console.log('inUsesss',permission)
+  //     });
+  //     setData(list)
+  //     }catch (err){
+  //       console.log(err)
+  //     }
+  //   };
+  //   fetechData();
+  // },[permission])
   
   // data.forEach((e)=>{
   //   // console.log('ID2',currentUser.pid)
@@ -78,12 +86,25 @@ function App() {
     }
   };
 
+  // const [dbar1, setDbar1] = useState('เขตจตุจักร');
+  // const [dbar2, setDbar2] = useState('แขวงลาดยาว');
+  // const [dbar3, setDbar3] = useState('จุดที่ 5');
+
+  // const updateDbars = (newDbar1, newDbar2, newDbar3) => {
+  //   setDbar1(newDbar1);
+  //   setDbar2(newDbar2);
+  //   setDbar3(newDbar3);
+  // };
+
   return (
     <Router>
       <Switch>
         <Route path="/support" exact component={Support} />
         <RequireAuth>
           <Sidebar />
+          
+          <ShopContextProvider>
+          {/* <NodeContext.Provider value={{ dbar1, dbar2, dbar3, updateDbars}}> */}
           {permission === 'admin' && (
             <RequirePermission role={permission}>
              <Route path="/overview" exact component={Overview} />
@@ -94,8 +115,11 @@ function App() {
              <Route path="/reports/reports3" exact component={ReportsThree} />
              <Route path="/messages" exact component={Message} />
              <Route path="/messages/message1" exact component={MessagesOne} />
-             <Route path="/vote" exact component={CannotAccess} />
+             <Route path="/vote" exact component={Vote} />
+             <Route path="/voteOffline" exact component={VoteOffline} />
+             <Route path="/testpage" exact component={TestPage} />
             </RequirePermission>
+            
           )}
           {permission === 'user' && (
              <RequirePermission role={permission}>
@@ -108,8 +132,12 @@ function App() {
              <Route path="/messages" exact component={CannotAccess} />
              <Route path="/messages/message1" exact component={CannotAccess} />
              <Route path="/vote" exact component={Vote} />
+             <Route path="/voteOffline" exact component={VoteOffline} />
             </RequirePermission>
           )}
+          {/* </NodeContext.Provider> */}
+          </ShopContextProvider>
+          
         </RequireAuth>
       </Switch>
     </Router>
